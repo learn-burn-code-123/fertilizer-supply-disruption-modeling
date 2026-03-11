@@ -60,6 +60,48 @@ hormuz-ph-urea/
     └── plots.py
 ```
 
+## Model Logic
+
+### Monthly Supply Index
+
+The supply index measures available urea supply relative to normal (1.0 = normal, lower = disrupted). For each month:
+
+```
+supply_index = max(0.15, min(1.0, 1.0 - vuln_weighted_share × closure - delay))
+```
+
+- **vuln_weighted_share**: Sum of (partner import share × vulnerability score) across all Philippine urea import partners. Uses Comtrade data; partners like Qatar and Saudi Arabia (Hormuz-dependent) have vulnerability 1.0; Indonesia, Malaysia, China have 0.1.
+- **closure**: Scenario-specific value 0–1 per month (0 = Strait open, 1 = fully closed). The share of imports from Hormuz-dependent partners is effectively lost when closure = 1.
+- **delay**: Scenario-specific shipping delay factor (0–0.2) that further reduces effective supply during and after closure.
+- **0.15**: Minimum floor so supply never goes to zero.
+
+### Philippine Urea Retail Price (PHP per 50 kg bag)
+
+Retail prices respond to global price shocks and local supply pressure:
+
+```
+world_price = base_world × global_price_shock_multiplier
+pass_through = world_price / base_world
+supply_pressure = 1 / supply_index
+ph_price = base_ph × (1 + β × (pass_through - 1) × scale) × (1 + β × (supply_pressure - 1) × 0.5)
+```
+
+- **base_world**: Latest World Bank urea price (USD). **base_ph**: Latest FPA Philippine retail price (PHP/50 kg).
+- **global_price_shock_multiplier**: Scenario-specific multiplier (e.g. 1.25 = 25% spike) reflecting global market reaction to closure.
+- **β (beta)**: Price pass-through elasticity (default 0.6). Controls how much global and supply shocks translate into retail prices.
+
+### Scenario Drivers
+
+Each scenario defines three 12-month series in `params.yaml`:
+
+| Parameter | Role |
+|-----------|------|
+| **closure_path** | 0–1 per month: severity of Strait closure (1 = full closure) |
+| **global_price_shock_multiplier** | Multiplier on world urea price (e.g. 1.25 = 25% spike) |
+| **shipping_delay_factor** | Extra supply reduction from delays (0–0.2) |
+
+**Severe** scenarios use closure = 1.0 during the disruption, larger price spikes (up to 1.25×), and higher delay factors. **Partial** scenarios use closure = 0.6 and gentler shocks.
+
 ## Scenarios
 
 - **baseline**: No closure
