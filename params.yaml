@@ -1,0 +1,79 @@
+project:
+  name: "hormuz-ph-urea"
+  output_dir: "outputs"
+  figures_dir: "outputs/figures"
+
+paths:
+  raw_dir: "data_raw"
+  processed_dir: "data_processed"
+
+comtrade:
+  enabled: true
+  api_key_env: "COMTRADE_API_KEY"
+  reporter: "PHL"
+  reporter_code: 608  # UN Comtrade numeric code for Philippines
+  flow: "M"
+  commodity_code: "310210"
+  frequency: "A"
+  start_year: 2018
+  end_year: 2025
+  raw_subdir: "data_raw/comtrade"
+  processed_partner_file: "data_processed/partner_shares_latest.csv"
+
+worldbank:
+  enabled: true
+  monthly_xlsx_url: "https://thedocs.worldbank.org/en/doc/5d903e848db1d1b83e0ec8f744e55570-0350012021/related/CMO-Historical-Data-Monthly.xlsx"
+  raw_subdir: "data_raw/worldbank"
+  processed_price_file: "data_processed/worldbank_urea_monthly.csv"
+  urea_series_name_contains: "Urea"
+
+fpa:
+  enabled: true
+  weekly_index_url: "https://fpa.da.gov.ph/weekly-prices/"
+  raw_subdir: "data_raw/fpa"
+  processed_price_file: "data_processed/ph_monthly_urea_prices.csv"
+  product_keywords:
+    - "UREA (PRILLED)"
+    - "UREA (GRANULAR)"
+  max_reports: 80
+
+baseline:
+  simulation_start: "2025-01-01"
+  simulation_months: 12
+  initial_inventory_months_cover: 1.0
+  baseline_monthly_demand_mode: "flat"
+  price_pass_through_beta: 0.6
+  pass_through_scale: 1.0
+  minimum_arrivals_index: 0.15
+
+vulnerability_scores:
+  Qatar: 1.0
+  Saudi Arabia: 1.0
+  United Arab Emirates: 1.0
+  Bahrain: 1.0
+  Kuwait: 1.0
+  Iraq: 1.0
+  Iran: 1.0
+  Oman: 0.3
+  Malaysia: 0.1
+  Indonesia: 0.1
+  China: 0.1
+  Brunei Darussalam: 0.1
+  Vietnam: 0.1
+  Others: 0.1
+
+scenarios:
+  baseline:
+    closure_path: [0,0,0,0,0,0,0,0,0,0,0,0]
+    global_price_shock_multiplier: [1,1,1,1,1,1,1,1,1,1,1,1]
+    shipping_delay_factor: [0,0,0,0,0,0,0,0,0,0,0,0]
+
+  severe_2m:
+    closure_path: [1.0,1.0,0.6,0.3,0.1,0,0,0,0,0,0,0]
+    global_price_shock_multiplier: [1.00,1.25,1.20,1.12,1.06,1.02,1,1,1,1,1,1]
+    shipping_delay_factor: [0.0,0.20,0.15,0.10,0.05,0,0,0,0,0,0,0]
+
+  partial_6m:
+    closure_path: [0.6,0.6,0.6,0.6,0.6,0.6,0.3,0.2,0.1,0,0,0]
+    global_price_shock_multiplier: [1.00,1.15,1.16,1.16,1.14,1.12,1.08,1.05,1.02,1,1,1]
+    shipping_delay_factor: [0,0.10,0.10,0.10,0.10,0.10,0.05,0.03,0.01,0,0,0]
