@@ -63,7 +63,13 @@ hormuz-ph-urea/
 ## Scenarios
 
 - **baseline**: No closure
+- **severe_1m**: Severe 1-month closure with price spike and shipping delays
 - **severe_2m**: Severe 2-month closure with price spike and shipping delays
+- **severe_3m**: Severe 3-month closure with price spike and shipping delays
+- **severe_6m**: Severe 6-month closure with price spike and shipping delays
+- **partial_1m**: Partial 1-month disruption
+- **partial_2m**: Partial 2-month disruption
+- **partial_3m**: Partial 3-month disruption
 - **partial_6m**: Partial 6-month disruption
 
 Vulnerability scores in `params.yaml` map partner countries to Hormuz exposure (1.0 = fully dependent on Strait, 0.1 = low exposure).
