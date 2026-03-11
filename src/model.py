@@ -40,8 +40,9 @@ def run_scenario(
         delay = scenario.shipping_delay_factor[m] if m < len(scenario.shipping_delay_factor) else 0
 
         # Supply: vulnerable share is disrupted by closure
-        supply_index = max(min_arrivals, 1.0 - vuln_weighted_share * closure + (1 - vuln_weighted_share))
-        supply_index = max(min_arrivals, min(1.0, supply_index - delay))
+        # supply = 1 - (vulnerable share * closure) - delay; closure=1 means full disruption of vulnerable routes
+        supply_index = 1.0 - vuln_weighted_share * closure - delay
+        supply_index = max(min_arrivals, min(1.0, supply_index))
 
         # World price with shock
         world_p = base_world * shock
